@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:crackuplib/crackuplib.dart';
 import "dart:math";
 import 'package:material_symbols_icons/symbols.dart';
+import '/components/drawer.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -73,6 +74,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
+      drawer: MainDrawer(),
       appBar: AppBar(
         centerTitle: true,
         title: const Text("Crack Up"),
