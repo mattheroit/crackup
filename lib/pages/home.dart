@@ -22,6 +22,20 @@ class _HomePageState extends State<HomePage> {
     "rebar",
   ];
 
+  final List<String> zeroJokesMessages = [
+    "This category's jokes took a vacation – maybe they're off to find some humor!",
+    "Uh-oh, this category is drier than a desert when it comes to jokes! Must be on a laughter diet.",
+    "Uh-oh, this category is drier than a desert without a punchline oasis. Time to spice it up or call in the comedy rescue squad!",
+    "Category so dry, even the crickets left. Paging the joke hydrant!",
+    "Category so empty, even the crickets left. Time to recruit a joke DJ!",
+    "Oops! This category's jokes took a vacation. They must be on a comedy cruise, leaving us in a sea of silence...",
+    "Looks like our concrete joke mixer is on a lunch break – probably enjoying some solid humor with a side of gravel.",
+    "Looks like the jokes decided to set themselves in stone for a moment. They're probably having a solid meeting about improving their mix of humor.",
+    "This category is so exclusive; even the jokes need a VIP pass to get in!",
+    "We checked under the joke couch, but all we found were lost coins and a remote. No jokes.",
+    "Breaking news: This category has declared a temporary joke shortage. Experts suspect it's due to an unexpected outbreak of seriousness. Stand by for further pun-formation.",
+  ];
+
   ValueNotifier<Map<String, List<Joke>>> jokesNotifier = ValueNotifier({});
   ValueNotifier<String> categoryNotifier = ValueNotifier("concrete");
   ValueNotifier<bool> isLoadingNotifier = ValueNotifier(false);
@@ -51,13 +65,14 @@ class _HomePageState extends State<HomePage> {
   /// Gets random category from the list of categories
   String getRandomCategory() {
     List<String> categories = crackUp.getCategoryList();
-    var category = categories[random.nextInt(categories.length)];
+    String category = categories[random.nextInt(categories.length)];
     return category;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         centerTitle: true,
         title: const Text("Crack Up"),
@@ -99,6 +114,7 @@ class _HomePageState extends State<HomePage> {
                     ],
                   );
                 } else {
+                  // We do this so that oeverything stays the same
                   return const Row(children: [Text("")]);
                 }
               },
@@ -115,21 +131,37 @@ class _HomePageState extends State<HomePage> {
               builder: (ctx, jokes, child) {
                 // null-check
                 if (jokes[categoryNotifier.value] != null) {
-                  return PageView.builder(
-                    itemCount: jokes[categoryNotifier.value]!.length,
-                    itemBuilder: (context, i) {
-                      Joke joke = jokes[categoryNotifier.value]!.elementAt(i);
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ListTile(
-                            title: Text(joke.title),
-                            subtitle: Text(joke.body),
-                          ),
-                        ],
-                      );
-                    },
-                  );
+                  if (jokes[categoryNotifier.value]!.isNotEmpty) {
+                    return PageView.builder(
+                      itemCount: jokes[categoryNotifier.value]!.length,
+                      itemBuilder: (context, i) {
+                        Joke joke = jokes[categoryNotifier.value]!.elementAt(i);
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ListTile(
+                              title: Text(joke.title),
+                              subtitle: Text(joke.body),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  } else {
+                    String line = zeroJokesMessages[
+                        random.nextInt(zeroJokesMessages.length)];
+                    return Center(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: MediaQuery.sizeOf(context).width * 0.1,
+                        ),
+                        child: Text(
+                          line,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    );
+                  }
                 } else {
                   return noJokesPageContent(context);
                 }
@@ -145,32 +177,29 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  /// Content that displays when no jokes are provided
   Padding noJokesPageContent(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(
-          horizontal: MediaQuery.sizeOf(context).width * 0.1),
+        horizontal: MediaQuery.sizeOf(context).width * 0.1,
+      ),
       child: const Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Column(
-            children: [
-              Icon(
-                Symbols.sentiment_sad,
-                size: 250,
-                color: Colors.grey,
-              ),
-              Text(
-                "Why did the jokes fail to load?",
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 10),
-              Text(
-                "Bad connection – the bits and giggles got stuck in the cloud!",
-                textAlign: TextAlign.center,
-              ),
-            ],
+          Icon(
+            Symbols.sentiment_sad,
+            size: 250,
+            color: Colors.grey,
           ),
-          SizedBox(),
+          Text(
+            "Why did the jokes fail to load?",
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 10),
+          Text(
+            "Bad connection – the bits and giggles got stuck in the cloud!",
+            textAlign: TextAlign.center,
+          ),
         ],
       ),
     );
