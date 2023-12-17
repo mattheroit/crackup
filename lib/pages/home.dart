@@ -24,6 +24,7 @@ class _HomePageState extends State<HomePage> {
 
   ValueNotifier<Map<String, List<Joke>>> jokesNotifier = ValueNotifier({});
   ValueNotifier<String> categoryNotifier = ValueNotifier("concrete");
+  ValueNotifier<bool> isLoadingNotifier = ValueNotifier(false);
 
   /// Gets initial category list from the website and preloads jokes from [customCategories]
   Future<void> _initializeData() async {
@@ -36,6 +37,7 @@ class _HomePageState extends State<HomePage> {
 
   /// Changes the category to a random one when called
   void changeCategory() async {
+    isLoadingNotifier.value = true;
     String category = getRandomCategory();
     while (categoryNotifier.value == category) {
       category = getRandomCategory();
@@ -43,6 +45,7 @@ class _HomePageState extends State<HomePage> {
     categoryNotifier.value = category;
     await crackUp.getJokesFromCategory(category);
     jokesNotifier.value = crackUp.getJokeMap();
+    isLoadingNotifier.value = false;
   }
 
   /// Gets random category from the list of categories
@@ -60,13 +63,18 @@ class _HomePageState extends State<HomePage> {
         title: const Text("Crack Up"),
         actions: [
           // Change category button
-          IconButton(
-            onPressed: () => changeCategory(),
-            icon: const Icon(
-              Icons.refresh_rounded,
-              weight: 5,
-              size: 30,
-            ),
+          ValueListenableBuilder(
+            valueListenable: isLoadingNotifier,
+            builder: (context, isLoading, child) {
+              return IconButton(
+                onPressed: isLoading ? null : () => changeCategory(),
+                icon: const Icon(
+                  Icons.refresh_rounded,
+                  weight: 5,
+                  size: 30,
+                ),
+              );
+            },
           ),
         ],
         // Category name & number of jokes
