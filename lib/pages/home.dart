@@ -67,6 +67,26 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(10),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+            child: ValueListenableBuilder(
+              valueListenable: jokesNotifier,
+              builder: (context, value, child) {
+                int numOfJokes =
+                    jokesNotifier.value[categoryNotifier.value]!.length;
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Number of jokes: $numOfJokes"),
+                    Text("Category: ${categoryNotifier.value.toUpperCase()}"),
+                  ],
+                );
+              },
+            ),
+          ),
+        ),
       ),
       body: FutureBuilder(
         future: _initializeData(),
@@ -81,7 +101,7 @@ class _HomePageState extends State<HomePage> {
                     Joke joke = jokes[categoryNotifier.value]!.elementAt(i);
                     return Padding(
                       padding: EdgeInsets.only(
-                        top: MediaQuery.sizeOf(context).height * 0.3,
+                        top: MediaQuery.sizeOf(context).height * 0.275,
                       ),
                       child: ListTile(
                         title: Text(joke.title),
