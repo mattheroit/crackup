@@ -1,3 +1,4 @@
+import 'package:crackup/pages/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:crackuplib/crackuplib.dart';
 
@@ -22,6 +23,13 @@ class MainDrawer extends StatelessWidget {
           ),
           ListBody(
             children: [
+              ListTile(
+                title: const Text("Settings"),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SettingsPage()),
+                ),
+              ),
               ListTile(
                 title: const Text("About App"),
                 onTap: () => showAboutDialog(
