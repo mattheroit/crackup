@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:crackuplib/crackuplib.dart';
 import "dart:math";
+import 'package:material_symbols_icons/symbols.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -58,6 +59,7 @@ class _HomePageState extends State<HomePage> {
         centerTitle: true,
         title: const Text("Crack Up"),
         actions: [
+          // Change category button
           IconButton(
             onPressed: () => changeCategory(),
             icon: const Icon(
@@ -67,6 +69,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ],
+        // Category name & number of jokes
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(10),
           child: Padding(
@@ -74,15 +77,22 @@ class _HomePageState extends State<HomePage> {
             child: ValueListenableBuilder(
               valueListenable: jokesNotifier,
               builder: (context, value, child) {
-                int numOfJokes =
-                    jokesNotifier.value[categoryNotifier.value]!.length;
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("Number of jokes: $numOfJokes"),
-                    Text("Category: ${categoryNotifier.value.toUpperCase()}"),
-                  ],
-                );
+                String category = categoryNotifier.value;
+
+                // null-check
+                if (jokesNotifier.value[category] != null) {
+                  int numOfJokes = jokesNotifier.value[category]!.length;
+                  category = category.toUpperCase();
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Number of jokes: $numOfJokes"),
+                      Text("Category: $category"),
+                    ],
+                  );
+                } else {
+                  return const Row(children: [Text("")]);
+                }
               },
             ),
           ),
@@ -95,21 +105,26 @@ class _HomePageState extends State<HomePage> {
             return ValueListenableBuilder(
               valueListenable: jokesNotifier,
               builder: (ctx, jokes, child) {
-                return PageView.builder(
-                  itemCount: jokes[categoryNotifier.value]!.length,
-                  itemBuilder: (context, i) {
-                    Joke joke = jokes[categoryNotifier.value]!.elementAt(i);
-                    return Padding(
-                      padding: EdgeInsets.only(
-                        top: MediaQuery.sizeOf(context).height * 0.275,
-                      ),
-                      child: ListTile(
-                        title: Text(joke.title),
-                        subtitle: Text(joke.body),
-                      ),
-                    );
-                  },
-                );
+                // null-check
+                if (jokes[categoryNotifier.value] != null) {
+                  return PageView.builder(
+                    itemCount: jokes[categoryNotifier.value]!.length,
+                    itemBuilder: (context, i) {
+                      Joke joke = jokes[categoryNotifier.value]!.elementAt(i);
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ListTile(
+                            title: Text(joke.title),
+                            subtitle: Text(joke.body),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                } else {
+                  return noJokesPageContent(context);
+                }
               },
             );
           } else {
@@ -118,6 +133,37 @@ class _HomePageState extends State<HomePage> {
             );
           }
         },
+      ),
+    );
+  }
+
+  Padding noJokesPageContent(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+          horizontal: MediaQuery.sizeOf(context).width * 0.1),
+      child: const Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Column(
+            children: [
+              Icon(
+                Symbols.sentiment_sad,
+                size: 250,
+                color: Colors.grey,
+              ),
+              Text(
+                "Why did the jokes fail to load?",
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 10),
+              Text(
+                "Bad connection – the bits and giggles got stuck in the cloud!",
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+          SizedBox(),
+        ],
       ),
     );
   }
