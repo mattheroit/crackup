@@ -74,7 +74,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      drawer: MainDrawer(),
+      drawer: MainDrawer(numOfCategories: crackUp.getCategoryList().length),
       appBar: AppBar(
         centerTitle: true,
         title: const Text("Crack Up"),

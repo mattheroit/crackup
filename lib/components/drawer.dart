@@ -1,10 +1,9 @@
 import 'package:crackup/pages/settings.dart';
 import 'package:flutter/material.dart';
-import 'package:crackuplib/crackuplib.dart';
 
 class MainDrawer extends StatelessWidget {
-  MainDrawer({super.key});
-  final CrackUp crackUp = CrackUp();
+  const MainDrawer({super.key, required this.numOfCategories});
+  final int numOfCategories;
 
   @override
   Widget build(BuildContext context) {
@@ -14,9 +13,10 @@ class MainDrawer extends StatelessWidget {
           DrawerHeader(
             child: Builder(
               builder: (context) {
-                int numOfCategories = crackUp.getCategoryList().length;
                 return ListTile(
-                  title: Text("Categories available: $numOfCategories"),
+                  title: Text(
+                    "Categories available: ${numOfCategories.toString()}",
+                  ),
                 );
               },
             ),
