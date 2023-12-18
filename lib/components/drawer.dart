@@ -1,5 +1,6 @@
 import 'package:crackup/pages/settings.dart';
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class MainDrawer extends StatelessWidget {
   const MainDrawer({super.key, required this.numOfCategories});
@@ -32,15 +33,20 @@ class MainDrawer extends StatelessWidget {
               ),
               ListTile(
                 title: const Text("About App"),
-                onTap: () => showAboutDialog(
-                  context: context,
-                  applicationName: "Crack Up",
-                  applicationVersion: "1.0.0",
-                  applicationLegalese: "© 2023 Matěj Verhaegen",
-                ),
-              )
+                onTap: () async {
+                  PackageInfo packageInfo = await PackageInfo.fromPlatform();
+                  String year = DateTime.now().year.toString();
+                  if (!context.mounted) return;
+                  showAboutDialog(
+                    context: context,
+                    applicationName: packageInfo.appName,
+                    applicationVersion: packageInfo.version,
+                    applicationLegalese: "© $year Matěj Verhaegen",
+                  );
+                },
+              ),
             ],
-          )
+          ),
         ],
       ),
     );
