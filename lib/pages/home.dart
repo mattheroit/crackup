@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:crackuplib/crackuplib.dart';
-import "dart:math";
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:crackuplib/crackuplib.dart';
+
 import '/components/drawer.dart';
+import '/wrapper.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,16 +13,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final CrackUp crackUp = CrackUp();
-  final Random random = Random();
-
-  final List<String> customCategories = [
-    "asphalt",
-    "concrete",
-    "cement",
-    "pavement",
-    "rebar",
-  ];
+  final CrackUpWrapper crackUpWrapper = CrackUpWrapper();
 
   final List<String> zeroJokesMessages = [
     "This category's jokes took a vacation – maybe they're off to find some humor!",
@@ -37,58 +29,25 @@ class _HomePageState extends State<HomePage> {
     "Breaking news: This category has declared a temporary joke shortage. Experts suspect it's due to an unexpected outbreak of seriousness. Stand by for further pun-formation.",
   ];
 
-  ValueNotifier<Map<String, List<Joke>>> jokesNotifier = ValueNotifier({});
-  ValueNotifier<String> categoryNotifier = ValueNotifier("concrete");
-  ValueNotifier<bool> isLoadingNotifier = ValueNotifier(false);
-
-  /// Gets initial category list from the website and preloads jokes from [customCategories]
-  Future<void> _initializeData() async {
-    await crackUp.initCrackUp(customCategories);
-    for (String category in customCategories) {
-      await crackUp.getJokesFromCategory(category);
-    }
-    jokesNotifier.value = crackUp.getJokeMap();
-  }
-
-  /// Changes the category to a random one when called
-  void changeCategory() async {
-    isLoadingNotifier.value = true;
-    String category = getRandomCategory();
-    while (categoryNotifier.value == category) {
-      category = getRandomCategory();
-    }
-    categoryNotifier.value = category;
-    await crackUp.getJokesFromCategory(category);
-    jokesNotifier.value = crackUp.getJokeMap();
-    isLoadingNotifier.value = false;
-  }
-
-  /// Gets random category from the list of categories
-  String getRandomCategory() {
-    List<String> categories = crackUp.getCategoryList();
-    String category = categories[random.nextInt(categories.length)];
-    return category;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      drawer: MainDrawer(numOfCategories: crackUp.getCategoryList().length),
+      drawer: const MainDrawer(),
       appBar: AppBar(
         centerTitle: true,
         title: const Text("Crack Up"),
         actions: [
           // Change category button
           ValueListenableBuilder(
-            valueListenable: isLoadingNotifier,
+            valueListenable: crackUpWrapper.isLoadingNotifier,
             builder: (context, isLoading, child) {
               return IconButton(
-                onPressed: isLoading ? null : () => changeCategory(),
+                onPressed:
+                    isLoading ? null : () => crackUpWrapper.changeCategory(),
                 icon: const Icon(
                   Icons.refresh_rounded,
                   weight: 5,
-                  size: 30,
                 ),
               );
             },
@@ -100,13 +59,14 @@ class _HomePageState extends State<HomePage> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15.0),
             child: ValueListenableBuilder(
-              valueListenable: jokesNotifier,
+              valueListenable: crackUpWrapper.jokesNotifier,
               builder: (context, value, child) {
-                String category = categoryNotifier.value;
+                String category = crackUpWrapper.categoryNotifier.value;
 
                 // null-check
-                if (jokesNotifier.value[category] != null) {
-                  int numOfJokes = jokesNotifier.value[category]!.length;
+                if (crackUpWrapper.jokesNotifier.value[category] != null) {
+                  int numOfJokes =
+                      crackUpWrapper.jokesNotifier.value[category]!.length;
                   category = category.toUpperCase();
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -124,55 +84,45 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      body: FutureBuilder(
-        future: _initializeData(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return ValueListenableBuilder(
-              valueListenable: jokesNotifier,
-              builder: (ctx, jokes, child) {
-                // null-check
-                if (jokes[categoryNotifier.value] != null) {
-                  if (jokes[categoryNotifier.value]!.isNotEmpty) {
-                    return PageView.builder(
-                      itemCount: jokes[categoryNotifier.value]!.length,
-                      itemBuilder: (context, i) {
-                        Joke joke = jokes[categoryNotifier.value]!.elementAt(i);
-                        return Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ListTile(
-                              title: Text(joke.title),
-                              subtitle: Text(joke.body),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  } else {
-                    String line = zeroJokesMessages[
-                        random.nextInt(zeroJokesMessages.length)];
-                    return Center(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: MediaQuery.sizeOf(context).width * 0.1,
-                        ),
-                        child: Text(
-                          line,
-                          textAlign: TextAlign.center,
-                        ),
+      body: ValueListenableBuilder(
+        valueListenable: crackUpWrapper.jokesNotifier,
+        builder: (ctx, jokes, child) {
+          // null-check
+          if (jokes[crackUpWrapper.categoryNotifier.value] != null) {
+            if (jokes[crackUpWrapper.categoryNotifier.value]!.isNotEmpty) {
+              return PageView.builder(
+                itemCount: jokes[crackUpWrapper.categoryNotifier.value]!.length,
+                itemBuilder: (context, i) {
+                  Joke joke = jokes[crackUpWrapper.categoryNotifier.value]!
+                      .elementAt(i);
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ListTile(
+                        title: Text(joke.title),
+                        subtitle: Text(joke.body),
                       ),
-                    );
-                  }
-                } else {
-                  return noJokesPageContent(context);
-                }
-              },
-            );
+                    ],
+                  );
+                },
+              );
+            } else {
+              String line =
+                  zeroJokesMessages[random.nextInt(zeroJokesMessages.length)];
+              return Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: MediaQuery.sizeOf(context).width * 0.1,
+                  ),
+                  child: Text(
+                    line,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              );
+            }
           } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return noJokesPageContent(context);
           }
         },
       ),

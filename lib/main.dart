@@ -1,7 +1,11 @@
 import 'package:crackup/pages/home.dart';
 import 'package:flutter/material.dart';
+import '/wrapper.dart';
 
-void main() {
+CrackUpWrapper crackUpWrapper = CrackUpWrapper();
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await crackUpWrapper.initializeData();
   runApp(const MyApp());
 }
 
