@@ -1,5 +1,7 @@
 import 'package:crackup/pages/settings.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import '/wrapper.dart';
 
 class MainDrawer extends StatefulWidget {
@@ -64,9 +66,7 @@ class _MainDrawerState extends State<MainDrawer> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 12),
-                      Text(
-                        "Categories available: ${info[0]}",
-                      ),
+                      Text("Categories available: ${info[0]}"),
                       const SizedBox(height: 20),
                       Text("Current category: ${info[1]}"),
                       Text("Number of Jokes: ${info[2]}"),
@@ -87,23 +87,30 @@ class _MainDrawerState extends State<MainDrawer> {
                 ),
               ),
               ValueListenableBuilder(
-                  valueListenable: crackUpWrapper.packageInfo,
-                  builder: (context, packageInfo, child) {
-                    return ListTile(
-                      leading: const Icon(Icons.info_outline_rounded),
-                      title: const Text("About App"),
-                      onTap: () {
-                        String year = DateTime.now().year.toString();
-                        if (!context.mounted) return;
-                        showAboutDialog(
-                          context: context,
-                          applicationName: packageInfo.appName,
-                          applicationVersion: packageInfo.version,
-                          applicationLegalese: "© $year Matěj Verhaegen",
-                        );
-                      },
-                    );
-                  }),
+                valueListenable: crackUpWrapper.packageInfo,
+                builder: (context, packageInfo, child) {
+                  String year = DateTime.now().year.toString();
+                  return AboutListTile(
+                    icon: const Icon(Icons.info_outline_rounded),
+                    applicationName: packageInfo.appName,
+                    applicationVersion: packageInfo.version,
+                    applicationLegalese: "© $year Matěj Verhaegen",
+                    aboutBoxChildren: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20.0),
+                        child: ElevatedButton(
+                          onPressed: () => launchUrl(
+                              Uri.parse(
+                                "https://github.com/mattheroit/crackup",
+                              ),
+                              mode: LaunchMode.externalApplication),
+                          child: const Text("Source code"),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
             ],
           ),
         ],
