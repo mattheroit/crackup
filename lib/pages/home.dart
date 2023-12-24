@@ -91,6 +91,8 @@ class _HomePageState extends State<HomePage> {
           if (jokes[crackUpWrapper.categoryNotifier.value] != null) {
             if (jokes[crackUpWrapper.categoryNotifier.value]!.isNotEmpty) {
               return PageView.builder(
+                // In this case, using this key will always rebuild the view and set the page to 0
+                key: ValueKey<String>(crackUpWrapper.categoryNotifier.value),
                 itemCount: jokes[crackUpWrapper.categoryNotifier.value]!.length,
                 itemBuilder: (context, i) {
                   Joke joke = jokes[crackUpWrapper.categoryNotifier.value]!
