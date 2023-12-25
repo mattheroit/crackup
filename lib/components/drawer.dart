@@ -26,8 +26,9 @@ class _MainDrawerState extends State<MainDrawer> {
           crackUpWrapper.categoryListNotifier.value.length.toString();
       currentCategory = crackUpWrapper.categoryNotifier.value;
       numberOfJokes = crackUpWrapper
-          .jokesNotifier.value[currentCategory]!.length
-          .toString();
+              .jokesNotifier.value[currentCategory]?.length
+              .toString() ??
+          "N/A";
 
       infoNotifier.value = [
         categoriesAvailable,
