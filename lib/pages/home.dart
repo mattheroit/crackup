@@ -53,36 +53,6 @@ class _HomePageState extends State<HomePage> {
             },
           ),
         ],
-        // Category name & number of jokes
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(10),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0),
-            child: ValueListenableBuilder(
-              valueListenable: crackUpWrapper.jokesNotifier,
-              builder: (context, value, child) {
-                String category = crackUpWrapper.categoryNotifier.value;
-
-                // null-check
-                if (crackUpWrapper.jokesNotifier.value[category] != null) {
-                  int numOfJokes =
-                      crackUpWrapper.jokesNotifier.value[category]!.length;
-                  category = category.toUpperCase();
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Number of jokes: $numOfJokes"),
-                      Text("Category: $category"),
-                    ],
-                  );
-                } else {
-                  // We do this so that oeverything stays the same
-                  return const Row(children: [Text("")]);
-                }
-              },
-            ),
-          ),
-        ),
       ),
       body: ValueListenableBuilder(
         valueListenable: crackUpWrapper.jokesNotifier,
