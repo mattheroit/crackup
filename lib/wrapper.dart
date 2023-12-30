@@ -16,6 +16,7 @@ class CrackUpWrapper {
 
   CrackUpWrapper._internal();
 
+  ValueNotifier<bool> fullListOfCategoriesNotifier = ValueNotifier(false);
   ValueNotifier<Map<String, List<Joke>>> jokesNotifier = ValueNotifier({});
   ValueNotifier<String> categoryNotifier = ValueNotifier("concrete");
   ValueNotifier<bool> isLoadingNotifier = ValueNotifier(false);
@@ -44,11 +45,19 @@ class CrackUpWrapper {
     packageInfo.value = await PackageInfo.fromPlatform();
     jokesNotifier.value = crackUp.getJokeMap();
     categoryListNotifier.value = crackUp.getCategoryList();
+    // checking if we got categories from the website
+    if (categoryListNotifier.value.length > customCategories.length) {
+      fullListOfCategoriesNotifier.value = true;
+    }
   }
 
   /// Changes the category to a random one when called
   void changeCategory() async {
     isLoadingNotifier.value = true;
+    // gets categories from the website if it fails during app start up
+    if (!fullListOfCategoriesNotifier.value) {
+      await initializeData();
+    }
     String category = getRandomCategory();
     while (categoryNotifier.value == category) {
       category = getRandomCategory();
