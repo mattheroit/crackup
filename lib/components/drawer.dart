@@ -1,6 +1,7 @@
 import 'package:crackup/pages/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '/wrapper.dart';
 
@@ -109,6 +110,23 @@ class _MainDrawerState extends State<MainDrawer> {
                         ),
                       ),
                     ],
+                  );
+                },
+              ),
+              ListTile(
+                title: const Text('Sdílet Aplikaci'),
+                leading: const Icon(Icons.share),
+                onTap: () async {
+                  final RenderBox? box =
+                      context.findRenderObject() as RenderBox?;
+                  String text =
+                      'https://github.com/mattheroit/crackup/releases/latest';
+                  String subject = 'Crack Up (the joke app)';
+                  await Share.share(
+                    text,
+                    subject: subject,
+                    sharePositionOrigin:
+                        box!.localToGlobal(Offset.zero) & box.size,
                   );
                 },
               ),
