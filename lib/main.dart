@@ -1,3 +1,4 @@
+import 'package:crackup/consts.dart';
 import 'package:crackup/pages/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -19,11 +20,37 @@ class MyApp extends StatelessWidget {
     // Ensure the status bar is always visible
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
 
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Crack Up',
-      theme: ThemeData(useMaterial3: true),
-      home: const HomePage(),
+    return FutureBuilder(
+      future: crackUpWrapper.readData(consts.prefs.theme),
+      initialData: ThemeMode.system,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          switch (snapshot.data) {
+            case "2":
+              NotifyTheme().setTheme(ThemeMode.dark);
+              break;
+            case "1":
+              NotifyTheme().setTheme(ThemeMode.light);
+              break;
+            default:
+              NotifyTheme().setTheme(ThemeMode.system);
+          }
+        }
+
+        return ValueListenableBuilder(
+          valueListenable: NotifyTheme().themeNotifier,
+          builder: (context, themeMode, child) {
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              //debugShowMaterialGrid: true,
+              theme: ThemeData.light(),
+              darkTheme: ThemeData.dark(),
+              themeMode: themeMode,
+              home: const HomePage(),
+            );
+          },
+        );
+      },
     );
   }
 }

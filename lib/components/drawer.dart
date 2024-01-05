@@ -23,13 +23,9 @@ class _MainDrawerState extends State<MainDrawer> {
   void checkLoadingStatus() {
     if (!crackUpWrapper.isLoadingNotifier.value) {
       // Loading is complete, update the data
-      categoriesAvailable =
-          crackUpWrapper.categoryListNotifier.value.length.toString();
+      categoriesAvailable = crackUpWrapper.categoryListNotifier.value.length.toString();
       currentCategory = crackUpWrapper.categoryNotifier.value;
-      numberOfJokes = crackUpWrapper
-              .jokesNotifier.value[currentCategory]?.length
-              .toString() ??
-          "N/A";
+      numberOfJokes = crackUpWrapper.jokesNotifier.value[currentCategory]?.length.toString() ?? "N/A";
 
       infoNotifier.value = [
         categoriesAvailable,
@@ -85,7 +81,7 @@ class _MainDrawerState extends State<MainDrawer> {
                 title: const Text("Settings"),
                 onTap: () => Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const SettingsPage()),
+                  MaterialPageRoute(builder: (context) => SettingsPage()),
                 ),
               ),
               ValueListenableBuilder(
@@ -117,16 +113,13 @@ class _MainDrawerState extends State<MainDrawer> {
                 title: const Text('Sdílet Aplikaci'),
                 leading: const Icon(Icons.share),
                 onTap: () async {
-                  final RenderBox? box =
-                      context.findRenderObject() as RenderBox?;
-                  String text =
-                      'https://github.com/mattheroit/crackup/releases/latest';
+                  final RenderBox? box = context.findRenderObject() as RenderBox?;
+                  String text = 'https://github.com/mattheroit/crackup/releases/latest';
                   String subject = 'Crack Up (the joke app)';
                   await Share.share(
                     text,
                     subject: subject,
-                    sharePositionOrigin:
-                        box!.localToGlobal(Offset.zero) & box.size,
+                    sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
                   );
                 },
               ),

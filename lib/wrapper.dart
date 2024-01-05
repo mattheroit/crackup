@@ -3,6 +3,7 @@ import 'package:crackuplib/crackuplib.dart';
 import 'dart:math';
 
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final CrackUp crackUp = CrackUp();
 final Random random = Random();
@@ -73,5 +74,35 @@ class CrackUpWrapper {
     List<String> categories = crackUp.getCategoryList();
     String category = categories[random.nextInt(categories.length)];
     return category;
+  }
+
+  /// save data to shared preferences used for storing url, statistics and settings
+  Future<void> saveData(String key, String value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(key, value);
+  }
+
+  /// get data from shared preferences used for storing url, statistics and settings
+  Future<String?> readData(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(key);
+  }
+}
+
+class NotifyTheme {
+  // Private constructor to prevent external instantiation
+  NotifyTheme._();
+
+  static final NotifyTheme _instance = NotifyTheme._();
+
+  factory NotifyTheme() {
+    return _instance;
+  }
+
+  ValueNotifier<ThemeMode> themeNotifier = ValueNotifier<ThemeMode>(ThemeMode.system);
+
+  // Method to update the theme mode and notify listeners.
+  void setTheme(ThemeMode mode) {
+    themeNotifier.value = mode;
   }
 }
