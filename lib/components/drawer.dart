@@ -111,7 +111,7 @@ class _MainDrawerState extends State<MainDrawer> {
                 },
               ),
               ListTile(
-                title: const Text('Sdílet Aplikaci'),
+                title: const Text('Share Crack Up'),
                 leading: const Icon(Icons.share),
                 onTap: () async {
                   final RenderBox? box = context.findRenderObject() as RenderBox?;
