@@ -1,7 +1,6 @@
 import 'package:crackup/consts.dart';
 import 'package:crackup/pages/home.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '/wrapper.dart';
 
 CrackUpWrapper crackUpWrapper = CrackUpWrapper();
@@ -17,9 +16,6 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    // Ensure the status bar is always visible
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
-
     return FutureBuilder(
       future: crackUpWrapper.readData(consts.prefs.theme),
       initialData: ThemeMode.system,

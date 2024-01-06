@@ -59,16 +59,17 @@ class _MainDrawerState extends State<MainDrawer> {
               builder: (context, info, child) {
                 return SizedBox(
                   width: MediaQuery.sizeOf(context).width * 0.65,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 12),
-                      Text("Categories available: ${info[0]}"),
-                      const SizedBox(height: 20),
-                      Text("Current category: ${info[1]}"),
-                      Text("Number of Jokes: ${info[2]}"),
-                    ],
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 12.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Categories available: ${info[0]}"),
+                        Text("Current category: ${info[1]}"),
+                        Text("Number of Jokes: ${info[2]}"),
+                      ],
+                    ),
                   ),
                 );
               },
